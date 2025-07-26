@@ -18,6 +18,7 @@ making your codebase modular and reusable.
 `Promptlin` consists of the following modules:
 
 - promptlin-core - Contains the base DSL, form engine, input handling, and validation system.
+- promptlin-console - Console implementation with context and renderer.
 
 ## Examples
 
