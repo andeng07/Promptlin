@@ -1,6 +1,7 @@
 package me.centauri07.promptlin.core.prompt
 
 import me.centauri07.promptlin.core.form.FormSessionScope
+import kotlin.reflect.KClass
 
 /**
  * Represents an abstract prompt that collects, parses, and validates user input of type [T].
@@ -10,7 +11,8 @@ import me.centauri07.promptlin.core.form.FormSessionScope
  * @property description A short description explaining the purpose of the prompt.
  * @param shouldInclude A lambda that determines whether this prompt should be included in the current context.
  */
-abstract class Prompt<T>(
+abstract class Prompt<T : Any>(
+    val valueType: KClass<T>,
     val id: String,
     val name: String,
     val description: String,

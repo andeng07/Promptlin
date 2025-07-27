@@ -10,14 +10,15 @@ import kotlin.reflect.KClass
 @BuilderDsl
 class RendererBuilderImpl<C : RenderContext>(
     private val contextType: KClass<C>,
-    private val bindings: MutableList<RenderBinding<*, C>> = mutableListOf()
+    private val bindings: MutableList<RenderBinding<*, out Prompt<*>, C>> = mutableListOf()
 ) : RendererBuilder<C>() {
 
-    override fun <P : Prompt<*>> bind(
+    override fun <T : Any, P : Prompt<T>> bind(
+        valueType: KClass<T>,
         promptType: KClass<P>,
-        block: RenderBindingBuilder<P, C>.() -> Unit
+        block: RenderBindingBuilder<T, P, C>.() -> Unit
     ) {
-        val renderBinding = RenderBindingBuilderImpl(promptType, contextType)
+        val renderBinding = RenderBindingBuilderImpl(valueType, promptType, contextType)
 
         renderBinding.block()
 

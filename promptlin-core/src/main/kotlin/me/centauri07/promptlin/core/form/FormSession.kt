@@ -1,5 +1,6 @@
 package me.centauri07.promptlin.core.form
 
+import me.centauri07.promptlin.core.prompt.Prompt
 import me.centauri07.promptlin.core.prompt.PromptInstance
 import me.centauri07.promptlin.core.renderer.RenderContext
 import me.centauri07.promptlin.core.renderer.Renderer
@@ -31,7 +32,7 @@ class FormSession<C : RenderContext>(
      * These wrap each [me.centauri07.promptlin.core.prompt.Prompt] in the form and track its answered state.
      */
     val promptInstances: List<PromptInstance<*>> = form.prompts.map {
-        PromptInstance(it, scope)
+        PromptInstance(it as Prompt<Any>, scope)
     }
 
     /**

@@ -27,7 +27,7 @@ abstract class FormBuilder {
      * @param prompt The [Prompt] instance to add.
      * @return The same [prompt] that was added.
      */
-    abstract fun <T> prompt(prompt: Prompt<T>): Prompt<T>
+    abstract fun <T : Any> prompt(prompt: Prompt<T>): Prompt<T>
 
     /**
      * Creates and registers a new input [Prompt] with the form using the given [InputHandler], ID, name,
@@ -49,14 +49,14 @@ abstract class FormBuilder {
      * @param promptBuilder A DSL block to configure validation, conditional inclusion, etc.
      * @return The constructed and registered [Prompt] instance.
      */
-    fun <T> input(
+    inline fun <reified T : Any> input(
         handler: InputHandler<T>,
         id: String,
         name: String,
         description: String,
         promptBuilder: PromptBuilder<T>.() -> Unit = {}
     ): Prompt<T> {
-        val promptBuilderImpl = InputPromptBuilderImpl(handler, id, name, description)
+        val promptBuilderImpl = InputPromptBuilderImpl(handler, T::class, id, name, description)
 
         promptBuilderImpl.promptBuilder()
 
