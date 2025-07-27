@@ -11,14 +11,14 @@ import me.centauri07.promptlin.core.renderer.renderer
 class ConsolePlatformHandler : PlatformHandler<ConsoleContext>(ConsoleContext::class, renderer) {
     companion object {
         val renderer = renderer<ConsoleContext> {
-            bind<InputPrompt<*>> {
+            bind<Any, InputPrompt<Any>> {
                 onInvoke { ctx, prompt ->
                     ctx.sendOutput("Enter ${prompt.name} (${prompt.description}):")
                     attemptSet(ctx.awaitInput())
                 }
 
-                onComplete { ctx, prompt ->
-                    ctx.sendOutput("Field `${prompt.name}` has been successfully set.")
+                onComplete { value, ctx, prompt ->
+                    ctx.sendOutput("Field `${prompt.name}` has been successfully set to `${value}`.")
                 }
 
                 onFailure { ctx, prompt, e ->

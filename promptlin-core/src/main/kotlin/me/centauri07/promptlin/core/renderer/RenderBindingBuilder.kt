@@ -30,7 +30,7 @@ import me.centauri07.promptlin.core.prompt.Prompt
  * @see RenderBinding
  */
 @BuilderDsl
-abstract class RenderBindingBuilder<P : Prompt<*>, C : RenderContext> {
+abstract class RenderBindingBuilder<T : Any, P : Prompt<T>, C : RenderContext> {
     /**
      * Defines the behavior that occurs when the prompt is first invoked.
      *
@@ -43,7 +43,7 @@ abstract class RenderBindingBuilder<P : Prompt<*>, C : RenderContext> {
      *
      * @param block the logic to execute on successful completion
      */
-    abstract fun onComplete(block: PromptInstanceScope.(C, P) -> Unit)
+    abstract fun onComplete(block: PromptInstanceScope.(T, C, P) -> Unit)
 
     /**
      * Defines the behavior that occurs when an exception is thrown during prompt processing.

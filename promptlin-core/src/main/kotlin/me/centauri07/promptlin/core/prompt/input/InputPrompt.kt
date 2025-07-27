@@ -2,6 +2,7 @@ package me.centauri07.promptlin.core.prompt.input
 
 import me.centauri07.promptlin.core.form.FormSessionScope
 import me.centauri07.promptlin.core.prompt.Prompt
+import kotlin.reflect.KClass
 
 /**
  * A [Prompt] that uses a [InputHandler] to parse user input from a string into type [T].
@@ -11,14 +12,15 @@ import me.centauri07.promptlin.core.prompt.Prompt
  * @param name The name of the prompt.
  * @param description A description to help users understand what the prompt is asking for.
  */
-class InputPrompt<T>(
+class InputPrompt<T : Any>(
     private val handler: InputHandler<T>,
+    valueType: KClass<T>,
     id: String,
     name: String,
     description: String,
     validators: MutableList<Validator<T>>,
     shouldInclude: FormSessionScope.() -> Boolean
-) : Prompt<T>(id, name, description, validators, shouldInclude) {
+) : Prompt<T>(valueType, id, name, description, validators, shouldInclude) {
 
     /**
      * Parses the provided [input] using the configured [InputHandler].

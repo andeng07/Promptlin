@@ -1,11 +1,10 @@
 package me.centauri07.promptlin.core.renderer
 
 import me.centauri07.promptlin.core.form.FormSession
+import me.centauri07.promptlin.core.prompt.Prompt
 import me.centauri07.promptlin.core.prompt.PromptInstance
 import me.centauri07.promptlin.core.prompt.PromptInstanceScope
-import me.centauri07.promptlin.core.prompt.Prompt
 import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 /**
  * Platform-agnostic form renderer.
@@ -17,7 +16,7 @@ import kotlin.reflect.full.isSubclassOf
  */
 class Renderer<C : RenderContext> internal constructor(
     private val contextType: KClass<C>,
-    private val bindings: List<RenderBinding<*, C>>
+    private val bindings: List<RenderBinding<*, out Prompt<*>, C>>
 ) {
     /**
      * Renders the given [prompt] using the associated renderer.
@@ -25,50 +24,56 @@ class Renderer<C : RenderContext> internal constructor(
      *
      * @param prompt The prompt to render.
      */
-    fun <P : PromptInstance<*>> invoke(session: FormSession<*>, prompt: P, context: C) {
+    fun <T : Any, P : PromptInstance<T>> invoke(session: FormSession<*>, prompt: P, context: C) {
         val renderer = resolve(prompt.prompt)
+            ?: throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
 
-        if (renderer != null) {
-            renderer.onInvoke(PromptInstanceScope(session, prompt), context, prompt.prompt)
-        } else {
-            throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
-        }
+        renderer.onInvoke(PromptInstanceScope(session, prompt), context, prompt.prompt)
     }
 
-    fun <P : PromptInstance<*>> complete(session: FormSession<*>, prompt: P, context: C) {
+    fun <T : Any, P : PromptInstance<T>> complete(session: FormSession<*>, prompt: P, context: C) {
         val renderer = resolve(prompt.prompt)
+            ?: throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
 
-        if (renderer != null) {
-            renderer.onComplete(PromptInstanceScope(session, prompt), context, prompt.prompt)
-        } else {
-            throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
-        }
+        renderer.onComplete(PromptInstanceScope(session, prompt), prompt.value as T, context, prompt.prompt)
     }
 
-    fun <P : PromptInstance<*>> failure(session: FormSession<*>, prompt: P, context: C, e: Throwable) {
+    fun <T : Any, P : PromptInstance<T>> failure(session: FormSession<*>, prompt: P, context: C, e: Throwable) {
         val renderer = resolve(prompt.prompt)
+            ?: throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
 
-        if (renderer != null) {
-            renderer.onFailure(PromptInstanceScope(session, prompt), context, prompt.prompt, e)
-        } else {
-            throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
-        }
+        renderer.onFailure(PromptInstanceScope(session, prompt), context, prompt.prompt, e)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <P : Prompt<*>> resolve(prompt: P): RenderBinding<P, C>? {
-        val promptClass = prompt::class
+    fun <T : Any, P : Prompt<T>> resolve(prompt: P): RenderBinding<T, P, C>? {    val promptType = prompt::class
+        val contextType = contextType
+        val valueType = prompt.valueType
 
-        // Try exact match
-        val exact = bindings.firstOrNull { it.promptType == promptClass }
-        if (exact != null) return exact as RenderBinding<P, C>
-
-        val fallback = bindings.firstOrNull {
-            promptClass.isSubclassOf(it.promptType)
+        bindings.forEach { binding ->
+            if (binding.promptType == promptType &&
+                binding.contextType == contextType &&
+                binding.valueType == valueType
+            ) {
+                return binding as? RenderBinding<T, P, C>
+            }
         }
-        if (fallback != null) return fallback as RenderBinding<P, C>
 
-        throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
+        bindings.forEach { binding ->
+            if (binding.promptType == promptType &&
+                binding.contextType == contextType &&
+                binding.valueType.java.isAssignableFrom(valueType.java)
+            ) {
+                return binding as? RenderBinding<T, P, C>
+            }
+        }
+
+        bindings.firstOrNull {
+            it.promptType == promptType &&
+                    it.contextType == contextType
+        }?.let { return it as? RenderBinding<T, P, C> }
+
+        return null
     }
 
     /**

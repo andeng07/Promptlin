@@ -13,11 +13,11 @@ import me.centauri07.promptlin.core.prompt.Prompt
  */
 class FormSessionScope(private val formSession: FormSession<*>) {
     @Suppress("UNCHECKED_CAST")
-    fun <T> get(prompt: Prompt<T>): T = formSession.promptInstances.first { it.prompt.id == prompt.id }.value!! as T
+    fun <T : Any> get(prompt: Prompt<T>): T = formSession.promptInstances.first { it.prompt.id == prompt.id }.value!! as T
 
-    fun <T> getOrElse(prompt: Prompt<T>, defaultValue: (Prompt<T>) -> T) : T = getOrNull(prompt) ?: defaultValue(prompt)
+    fun <T : Any> getOrElse(prompt: Prompt<T>, defaultValue: (Prompt<T>) -> T) : T = getOrNull(prompt) ?: defaultValue(prompt)
 
-    fun <T> getOrNull(prompt: Prompt<T>) : T? = runCatching { get(prompt) }.getOrNull()
+    fun <T : Any> getOrNull(prompt: Prompt<T>) : T? = runCatching { get(prompt) }.getOrNull()
 
     @Suppress("UNCHECKED_CAST")
     fun <T> get(promptId: String): T = formSession.promptInstances.first { it.prompt.id == promptId }.value!! as T

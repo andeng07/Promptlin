@@ -32,7 +32,11 @@ abstract class RendererBuilder<C : RenderContext>() {
      * @param promptType the [KClass] of the prompt
      * @param block the configuration block for building the render logic
      */
-    abstract fun <P : Prompt<*>> bind(promptType: KClass<P>, block: RenderBindingBuilder<P, C>.() -> Unit)
+    abstract fun <T : Any, P : Prompt<T>> bind(
+        valueType: KClass<T>,
+        promptType: KClass<P>,
+        block: RenderBindingBuilder<T, P, C>.() -> Unit
+    )
 
     /**
      * Registers a render binding for the given [Prompt] type using a reified type parameter.
@@ -42,9 +46,9 @@ abstract class RendererBuilder<C : RenderContext>() {
      * @param P the type of [Prompt]
      * @param block the configuration block for building the render logic
      */
-    inline fun <reified P : Prompt<*>> bind(
-        noinline block: RenderBindingBuilder<P, C>.() -> Unit
+    inline fun <reified T : Any, reified P : Prompt<T>> bind(
+        noinline block: RenderBindingBuilder<T, P, C>.() -> Unit
     ) {
-        bind(P::class, block)
+        bind(T::class, P::class, block)
     }
 }

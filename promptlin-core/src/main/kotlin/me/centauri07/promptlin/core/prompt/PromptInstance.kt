@@ -13,7 +13,7 @@ import me.centauri07.promptlin.core.form.FormSessionScope
  * @property prompt The [Prompt] definition this instance wraps.
  * @property formSessionScope Provides access to the current session's state for validation or inclusion logic.
  */
-class PromptInstance<T>(val prompt: Prompt<T>, private val formSessionScope: FormSessionScope) {
+class PromptInstance<T : Any>(val prompt: Prompt<T>, private val formSessionScope: FormSessionScope) {
     /**
      * The parsed and validated value provided by the user.
      *

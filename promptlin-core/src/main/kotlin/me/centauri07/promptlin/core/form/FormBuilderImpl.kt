@@ -6,7 +6,7 @@ class FormBuilderImpl(
     private val prompts: MutableList<Prompt<*>> = mutableListOf()
 ) : FormBuilder() {
 
-    override fun <T> prompt(prompt: Prompt<T>): Prompt<T> {
+    override fun <T : Any> prompt(prompt: Prompt<T>): Prompt<T> {
         prompts += prompt
         return prompt
     }
