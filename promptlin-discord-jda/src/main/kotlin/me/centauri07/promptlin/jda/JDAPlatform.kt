@@ -55,7 +55,7 @@ class JDAPlatform(
         }
     }
 
-        init {
+    init {
         jda.addEventListener(MessageReceivedListener())
     }
 }
