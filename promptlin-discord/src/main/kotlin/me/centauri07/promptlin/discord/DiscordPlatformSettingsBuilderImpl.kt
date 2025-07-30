@@ -6,7 +6,7 @@ import me.centauri07.promptlin.core.prompt.input.InputPrompt
 open class DiscordPlatformSettingsBuilderImpl<C: DiscordContext<M>, M> : DiscordPlatformSettingsBuilder<C, M> {
     private lateinit var inputPromptMessage: (C, InputPrompt<*>) -> M
     private lateinit var completePromptMessage: (Any, C, Prompt<*>) -> M
-    private lateinit var failurePromptMessage: (Prompt<*>, Throwable) -> M
+    private lateinit var failurePromptMessage: (C, Prompt<*>, Throwable) -> M
 
     override fun inputPromptMessage(block: (C, InputPrompt<*>) -> M) {
         inputPromptMessage = block
@@ -16,7 +16,7 @@ open class DiscordPlatformSettingsBuilderImpl<C: DiscordContext<M>, M> : Discord
         completePromptMessage = block
     }
 
-    override fun failureMessage(block: (Prompt<*>, Throwable) -> M) {
+    override fun failureMessage(block: (C, Prompt<*>, Throwable) -> M) {
         failurePromptMessage = block
     }
 

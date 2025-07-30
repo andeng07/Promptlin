@@ -45,7 +45,7 @@ abstract class DiscordPlatformHandler<C : DiscordContext<M>, M>(
                 }
 
                 onFailure { ctx, prompt, e ->
-                    ctx.sendMessage(settings.failurePromptMessage(prompt, e))
+                    ctx.sendMessage(settings.failurePromptMessage(ctx, prompt, e))
                 }
             }
         }

@@ -19,7 +19,7 @@ import me.centauri07.promptlin.core.prompt.input.InputPrompt
 data class DiscordPlatformSettings<C : DiscordContext<M>, M>(
     val inputPromptMessage: (C, InputPrompt<*>) -> M,
     val completePromptMessage: (Any, C, Prompt<*>) -> M,
-    val failurePromptMessage: (Prompt<*>, Throwable) -> M
+    val failurePromptMessage: (C, Prompt<*>, Throwable) -> M
 ) {
     /**
      * Creates a new [DiscordPlatformSettings] by copying the current settings and

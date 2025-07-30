@@ -30,6 +30,6 @@ interface DiscordPlatformSettingsBuilder<C : DiscordContext<M>, M> {
      *
      * @param block Produces the Discord message for a failed prompt.
      */
-    fun failureMessage(block: (Prompt<*>, Throwable) -> M)
+    fun failureMessage(block: (C, Prompt<*>, Throwable) -> M)
 }
 
