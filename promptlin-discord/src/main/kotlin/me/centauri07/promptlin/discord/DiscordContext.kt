@@ -1,5 +1,6 @@
 package me.centauri07.promptlin.discord
 
+import me.centauri07.promptlin.core.prompt.Prompt
 import me.centauri07.promptlin.core.renderer.RenderContext
 
 /**
@@ -25,6 +26,15 @@ abstract class DiscordContext<M> : RenderContext {
     abstract fun sendMessage(message: M)
 
     /**
+     * Sends a message to the Discord platform.
+     *
+     * Implementations should handle message delivery through the chosen Discord library or API.
+     *
+     * @param message The message object to send to Discord.
+     */
+    abstract fun sendMessage(type: MessageType, prompt: Prompt<*>, message: M)
+
+    /**
      * Registers a listener to be invoked when a new message is received.
      *
      * Implementations should call [block] whenever a message event occurs in the Discord channel
@@ -34,4 +44,8 @@ abstract class DiscordContext<M> : RenderContext {
      * The first parameter is the raw message object [M], and the second is the message content [String].
      */
     abstract fun onMessageReceived(block: (M, String) -> Unit)
+
+    enum class MessageType {
+        PROMPT, COMPLETE, FAIL
+    }
 }

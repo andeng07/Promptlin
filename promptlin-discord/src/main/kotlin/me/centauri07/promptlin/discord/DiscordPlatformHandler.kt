@@ -34,18 +34,30 @@ abstract class DiscordPlatformHandler<C : DiscordContext<M>, M>(
         ): Renderer<C> = renderer(contextType) {
             bind<Any, InputPrompt<Any>> {
                 onInvoke { ctx, prompt ->
-                    ctx.sendMessage(settings.inputPromptMessage(ctx, prompt))
+                    ctx.sendMessage(
+                        DiscordContext.MessageType.PROMPT,
+                        prompt,
+                        settings.inputPromptMessage(ctx, prompt)
+                    )
                     ctx.onMessageReceived { _, content ->
                         attemptSet(content)
                     }
                 }
 
                 onComplete { value, ctx, prompt ->
-                    ctx.sendMessage(settings.completePromptMessage(value, ctx, prompt))
+                    ctx.sendMessage(
+                        DiscordContext.MessageType.COMPLETE,
+                        prompt,
+                        settings.completePromptMessage(value, ctx, prompt)
+                    )
                 }
 
                 onFailure { ctx, prompt, e ->
-                    ctx.sendMessage(settings.failurePromptMessage(ctx, prompt, e))
+                    ctx.sendMessage(
+                        DiscordContext.MessageType.FAIL,
+                        prompt,
+                        settings.failurePromptMessage(ctx, prompt, e)
+                        )
                 }
             }
         }
