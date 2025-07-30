@@ -1,5 +1,6 @@
 package me.centauri07.promptlin.discord
 
+import me.centauri07.promptlin.core.BuilderDsl
 import me.centauri07.promptlin.core.prompt.Prompt
 import me.centauri07.promptlin.core.prompt.input.InputPrompt
 
@@ -9,6 +10,7 @@ import me.centauri07.promptlin.core.prompt.input.InputPrompt
  * @param C Discord context type used for sending and receiving messages.
  * @param M Discord message type (e.g., `Message` in JDA or `MessageCreateData` in Kord).
  */
+@BuilderDsl
 interface DiscordPlatformSettingsBuilder<C : DiscordContext<M>, M> {
 
     /**
