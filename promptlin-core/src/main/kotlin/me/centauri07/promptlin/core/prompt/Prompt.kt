@@ -7,16 +7,19 @@ import kotlin.reflect.KClass
  * Represents an abstract prompt that collects, parses, and validates user input of type [T].
  *
  * @param T The type of value this prompt expects.
+ * @property valueType The Kotlin [KClass] of [T], used for type reflection or parsing.
+ * @property id A unique identifier for this prompt.
  * @property name The display name of the prompt.
  * @property description A short description explaining the purpose of the prompt.
- * @param shouldInclude A lambda that determines whether this prompt should be included in the current context.
+ * @param validators A list of [Validator]s that are applied to the parsed input.
+ * @param shouldInclude A lambda that determines whether this prompt should be included in a [me.centauri07.promptlin.core.form.FormSession].
  */
 abstract class Prompt<T : Any>(
     val valueType: KClass<T>,
     val id: String,
     val name: String,
     val description: String,
-    private val validators: MutableList<Validator<T>>,
+    private val validators: List<Validator<T>>,
     private val shouldInclude: FormSessionScope.() -> Boolean
 ) {
     /**
