@@ -35,12 +35,12 @@ abstract class Prompt<T : Any>(
      */
     fun validate(formSessionScope: FormSessionScope, value: T): Result<T> {
         val errors = validators.mapNotNull { validator ->
-            value?.let {
+            value.let {
                 if (!validator.predicate(formSessionScope, value)) validator.failureMessage else null
             }
         }
 
-        return if (errors.isEmpty()) Result.success(value!!)
+        return if (errors.isEmpty()) Result.success(value)
         else Result.failure(IllegalArgumentException(errors.joinToString("; ")))
     }
 
