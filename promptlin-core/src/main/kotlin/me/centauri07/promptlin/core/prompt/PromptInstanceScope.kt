@@ -1,6 +1,7 @@
 package me.centauri07.promptlin.core.prompt
 
 import me.centauri07.promptlin.core.form.FormSession
+import me.centauri07.promptlin.core.form.FormSessionScope
 
 /**
  * Execution scope provided to rendering lifecycle callbacks for a specific [PromptInstance].
@@ -20,13 +21,15 @@ import me.centauri07.promptlin.core.form.FormSession
  *
  * @property session the parent [FormSession] managing the prompt flow
  * @property sessionPrompt the current prompt instance in focus
+ * @property sessionScope A broader [FormSessionScope] for accessing session-level utilities.
  *
  * @see FormSession
  * @see PromptInstance
  */
 class PromptInstanceScope(
     private val session: FormSession<*>,
-    private val sessionPrompt: PromptInstance<*>
+    private val sessionPrompt: PromptInstance<*>,
+    val sessionScope: FormSessionScope
 ) {
     /**
      * Attempts to submit the given [input] to the current prompt.

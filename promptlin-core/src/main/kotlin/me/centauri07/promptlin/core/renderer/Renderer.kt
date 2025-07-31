@@ -1,6 +1,7 @@
 package me.centauri07.promptlin.core.renderer
 
 import me.centauri07.promptlin.core.form.FormSession
+import me.centauri07.promptlin.core.form.FormSessionScope
 import me.centauri07.promptlin.core.prompt.Prompt
 import me.centauri07.promptlin.core.prompt.PromptInstance
 import me.centauri07.promptlin.core.prompt.PromptInstanceScope
@@ -24,25 +25,25 @@ class Renderer<C : RenderContext> internal constructor(
      *
      * @param prompt The prompt to render.
      */
-    fun <T : Any, P : PromptInstance<T>> invoke(session: FormSession<*>, prompt: P, context: C) {
+    fun <T : Any, P : PromptInstance<T>> invoke(session: FormSession<*>, scope: FormSessionScope, prompt: P, context: C) {
         val renderer = resolve(prompt.prompt)
             ?: throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
 
-        renderer.onInvoke(PromptInstanceScope(session, prompt), context, prompt.prompt)
+        renderer.onInvoke(PromptInstanceScope(session, prompt, scope), context, prompt.prompt)
     }
 
-    fun <T : Any, P : PromptInstance<T>> complete(session: FormSession<*>, prompt: P, context: C) {
+    fun <T : Any, P : PromptInstance<T>> complete(session: FormSession<*>, scope: FormSessionScope, prompt: P, context: C) {
         val renderer = resolve(prompt.prompt)
             ?: throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
 
-        renderer.onComplete(PromptInstanceScope(session, prompt), prompt.value as T, context, prompt.prompt)
+        renderer.onComplete(PromptInstanceScope(session, prompt, scope), prompt.value as T, context, prompt.prompt)
     }
 
-    fun <T : Any, P : PromptInstance<T>> failure(session: FormSession<*>, prompt: P, context: C, e: Throwable) {
+    fun <T : Any, P : PromptInstance<T>> failure(session: FormSession<*>, scope: FormSessionScope, prompt: P, context: C, e: Throwable) {
         val renderer = resolve(prompt.prompt)
             ?: throw NotImplementedError("No renderer registered for ${prompt::class.simpleName}")
 
-        renderer.onFailure(PromptInstanceScope(session, prompt), context, prompt.prompt, e)
+        renderer.onFailure(PromptInstanceScope(session,prompt, scope), context, prompt.prompt, e)
     }
 
     @Suppress("UNCHECKED_CAST")
