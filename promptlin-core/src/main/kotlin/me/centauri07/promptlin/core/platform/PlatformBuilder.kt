@@ -52,6 +52,7 @@ abstract class PlatformBuilder<C : RenderContext>(
         builder: RendererBuilder<C>.() -> Unit = {}
     ) {
         val impl = RendererBuilderImpl(contextType)
+        impl.builder()
         renderer(impl.build(), builder)
     }
 }
