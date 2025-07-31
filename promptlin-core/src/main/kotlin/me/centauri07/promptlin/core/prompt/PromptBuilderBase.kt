@@ -23,7 +23,7 @@ import me.centauri07.promptlin.core.form.FormSessionScope
  * @see Prompt
  */
 @BuilderDsl
-abstract class PromptBuilder<T>() {
+interface PromptBuilderBase<T> {
     /**
      * Registers a validation rule for the current prompt.
      *
@@ -55,7 +55,7 @@ abstract class PromptBuilder<T>() {
      * In both examples, `this` refers to the [FormSessionScope], and `input` is the current
      * prompt's answer being validated.
      */
-    abstract fun validate(message: String, predicate: FormSessionScope.(T) -> Boolean)
+    fun validate(message: String, predicate: FormSessionScope.(T) -> Boolean)
 
     /**
      * Conditionally includes this prompt in the form based on session state.
@@ -84,5 +84,5 @@ abstract class PromptBuilder<T>() {
      * This is useful for dynamic forms where certain questions are only shown
      * based on previous input.
      */
-    abstract fun includeIf(predicate: FormSessionScope.() -> Boolean)
+    fun includeIf(predicate: FormSessionScope.() -> Boolean)
 }
