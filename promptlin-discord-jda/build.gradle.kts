@@ -7,5 +7,5 @@ repositories {
 
 dependencies {
     api(project(":promptlin-discord"))
-    implementation("net.dv8tion:JDA:5.6.1")
+    compileOnly("net.dv8tion:JDA:5.6.1")
 }
