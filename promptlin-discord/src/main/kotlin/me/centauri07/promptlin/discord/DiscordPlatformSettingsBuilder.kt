@@ -2,7 +2,10 @@ package me.centauri07.promptlin.discord
 
 import me.centauri07.promptlin.core.BuilderDsl
 import me.centauri07.promptlin.core.prompt.Prompt
+import me.centauri07.promptlin.core.prompt.choice.ChoicePrompt
 import me.centauri07.promptlin.core.prompt.input.InputPrompt
+import me.centauri07.promptlin.discord.prompt.choice.ButtonOption
+import me.centauri07.promptlin.discord.prompt.choice.SelectOption
 
 /**
  * Builder DSL for creating or overriding [DiscordPlatformSettings].
@@ -16,9 +19,23 @@ interface DiscordPlatformSettingsBuilder<C : DiscordContext<M>, M> {
     /**
      * Sets the function used to create the message shown when an [InputPrompt] is triggered.
      *
-     * @param block Produces the Discord message for an input prompt.
+     * @param block Produces the Discord message for an [InputPrompt]
      */
     fun inputPromptMessage(block: (C, InputPrompt<*>) -> M)
+
+    /**
+     * Sets the function used to create the message shown when a [ChoicePrompt]<`ButtonChoice`> is triggered.
+     *
+     * @param block Produces the Discord message for a [ChoicePrompt]<`ButtonOption`>.
+     */
+    fun buttonPromptMessage(block: (C, ChoicePrompt<ButtonOption>, List<ButtonOption>) -> M)
+
+    /**
+     * Sets the function used to create the message shown when a [ChoicePrompt]<`SelectOption`> is triggered.
+     *
+     * @param block Produces the Discord message for a [ChoicePrompt]<`SelectOption`>.
+     */
+    fun selectPromptMessage(block: (C, ChoicePrompt<SelectOption>, List<SelectOption>) -> M)
 
     /**
      * Sets the function used to create the message shown when a prompt completes successfully.

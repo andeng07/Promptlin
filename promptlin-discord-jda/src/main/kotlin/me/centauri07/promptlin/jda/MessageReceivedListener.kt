@@ -1,19 +1,18 @@
 package me.centauri07.promptlin.jda
 
+import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 
-open class MessageReceivedListener : ListenerAdapter() {
+object MessageReceivedListener : ListenerAdapter() {
 
-    companion object {
-        private val queue: MutableMap<InputSessionKey, (MessageCreateData, String) -> Unit> = mutableMapOf()
+    private val queue: MutableMap<InputSessionKey, (MessageCreateData, String) -> Unit> = mutableMapOf()
 
-        fun queue(userId: Long, channelId: Long, block: (MessageCreateData, String) -> Unit) {
-            val key = InputSessionKey(userId, channelId)
+    fun queue(userId: Long, channelId: Long, block: (MessageCreateData, String) -> Unit) {
+        val key = InputSessionKey(userId, channelId)
 
-            queue[key] = block
-        }
+        queue[key] = block
     }
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
@@ -22,7 +21,7 @@ open class MessageReceivedListener : ListenerAdapter() {
         val key = InputSessionKey(event.author.idLong, event.channel.idLong)
 
         queue.remove(key)?.also {
-            event.message.delete().queue()
+            if (event.channelType != ChannelType.PRIVATE) event.message.delete().queue()
             it.invoke(MessageCreateData.fromMessage(event.message), event.message.contentRaw)
         }
     }
@@ -31,4 +30,5 @@ open class MessageReceivedListener : ListenerAdapter() {
         val userId: Long,
         val channelId: Long
     )
+
 }

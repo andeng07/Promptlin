@@ -35,23 +35,29 @@ class JDAContext(val channel: MessageChannel, val user: User) : DiscordContext<M
 
         if (promptMessageId != null && type != MessageType.FAIL) {
             if (type != MessageType.PROMPT) {
-                channel.retrieveMessageById(promptMessageId).queue {
-                    it.editMessage(
-                        MessageEditBuilder.fromCreateData(message).build()
-                    ).queue()
-                }
+                val retrievedMessage = channel.retrieveMessageById(promptMessageId).complete()
+                retrievedMessage.editMessage(
+                    MessageEditBuilder.fromCreateData(message).build()
+                ).complete()
             }
             return
         }
 
-        channel.sendMessage(
+        val message = channel.sendMessage(
             message
-        ).queue {
-            if (type != MessageType.FAIL) promptMessages[prompt.id] = it.idLong
-        }
+        ).complete()
+
+        if (type != MessageType.FAIL) promptMessages[prompt.id] = message.idLong
     }
 
     override fun onMessageReceived(block: (MessageCreateData, String) -> Unit) {
         MessageReceivedListener.queue(user.idLong, channel.idLong, block)
+    }
+
+    override fun onButtonClicked(prompt: Prompt<*>, block: (MessageCreateData, String) -> Unit) {
+        val promptMessageId = promptMessages[prompt.id]
+            ?: throw IllegalArgumentException("Prompt with ID '${prompt.id}' has not been sent to the user yet.")
+
+        ButtonClickedListener.queue(user.idLong, channel.idLong, promptMessageId, block)
     }
 }
