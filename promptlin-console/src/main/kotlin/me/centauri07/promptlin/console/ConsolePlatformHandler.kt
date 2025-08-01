@@ -1,6 +1,8 @@
 package me.centauri07.promptlin.console
 
 import me.centauri07.promptlin.core.platform.PlatformHandler
+import me.centauri07.promptlin.core.prompt.choice.Option
+import me.centauri07.promptlin.core.prompt.choice.ChoicePrompt
 import me.centauri07.promptlin.core.prompt.input.InputPrompt
 import me.centauri07.promptlin.core.renderer.renderer
 
@@ -19,6 +21,23 @@ class ConsolePlatformHandler : PlatformHandler<ConsoleContext>(ConsoleContext::c
 
                 onComplete { value, ctx, prompt ->
                     ctx.sendOutput("Field `${prompt.name}` has been successfully set to `${value}`.")
+                }
+
+                onFailure { ctx, prompt, e ->
+                    ctx.sendOutput("Error encountered: ${e.message}")
+                }
+            }
+
+            bind<Option, ChoicePrompt<Option>> {
+                onInvoke { ctx, prompt ->
+                    ctx.sendOutput("Enter ${prompt.name} (${prompt.description}):\nChoices: ${
+                        prompt.getOptions(sessionScope).joinToString { it.label }
+                    }")
+                    attemptSet(ctx.awaitInput())
+                }
+
+                onComplete { value, ctx, prompt ->
+                    ctx.sendOutput("Field `${prompt.name}` has been successfully set to `${value.label}`.")
                 }
 
                 onFailure { ctx, prompt, e ->
