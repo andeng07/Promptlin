@@ -2,7 +2,7 @@ package me.centauri07.promptlin.core.form
 
 import me.centauri07.promptlin.core.BuilderDsl
 import me.centauri07.promptlin.core.prompt.Prompt
-import me.centauri07.promptlin.core.prompt.PromptBuilder
+import me.centauri07.promptlin.core.prompt.PromptBuilderBase
 import me.centauri07.promptlin.core.prompt.input.InputPromptBuilderImpl
 import me.centauri07.promptlin.core.prompt.input.InputHandler
 
@@ -11,7 +11,7 @@ import me.centauri07.promptlin.core.prompt.input.InputHandler
  *
  * Implementations of this class are responsible for collecting prompts that define the structure
  * of the form. You typically use the [input] function to define new input prompts and configure
- * them using a [PromptBuilder].
+ * them using a [PromptBuilderBase].
  *
  * Marked with [@BuilderDsl] to scope DSL usage within a [FormBuilder] block.
  */
@@ -30,8 +30,8 @@ abstract class FormBuilder {
     abstract fun <T : Any> prompt(prompt: Prompt<T>): Prompt<T>
 
     /**
-     * Creates and registers a new input [Prompt] with the form using the given [InputHandler], ID, name,
-     * and description. Additional configuration can be done through a [PromptBuilder] DSL block.
+     * Creates and registers a new [me.centauri07.promptlin.core.prompt.input.InputPrompt] with the form using the given [InputHandler], ID, name,
+     * and description. Additional configuration can be done through a [PromptBuilderBase] DSL block.
      *
      * Example:
      * ```
@@ -46,7 +46,7 @@ abstract class FormBuilder {
      * @param id The unique identifier for this prompt.
      * @param name The display name of the prompt.
      * @param description A brief explanation or instruction for the user.
-     * @param promptBuilder A DSL block to configure validation, conditional inclusion, etc.
+     * @param promptBuilderBase A DSL block to configure validation, conditional inclusion, etc.
      * @return The constructed and registered [Prompt] instance.
      */
     inline fun <reified T : Any> input(
@@ -54,11 +54,11 @@ abstract class FormBuilder {
         id: String,
         name: String,
         description: String,
-        promptBuilder: PromptBuilder<T>.() -> Unit = {}
+        promptBuilderBase: PromptBuilderBase<T>.() -> Unit = {}
     ): Prompt<T> {
         val promptBuilderImpl = InputPromptBuilderImpl(handler, T::class, id, name, description)
 
-        promptBuilderImpl.promptBuilder()
+        promptBuilderImpl.promptBuilderBase()
 
         val prompt = promptBuilderImpl.build()
 

@@ -32,6 +32,7 @@ class FormSession<C : RenderContext>(
      * These wrap each [me.centauri07.promptlin.core.prompt.Prompt] in the form and track its answered state.
      */
     val promptInstances: List<PromptInstance<*>> = form.prompts.map {
+        @Suppress("UNCHECKED_CAST")
         PromptInstance(it as Prompt<Any>, scope)
     }
 
@@ -56,7 +57,7 @@ class FormSession<C : RenderContext>(
             return
         }
 
-        renderer.invoke(this, latestPrompt, context)
+        renderer.invoke(this, scope, latestPrompt, context)
     }
 
     /**
@@ -78,12 +79,12 @@ class FormSession<C : RenderContext>(
         val result = latestPrompt.attemptSet(assignValue)
 
         if (result.isFailure) {
-            renderer.failure(this, latestPrompt, context, result.exceptionOrNull()!!)
+            renderer.failure(this, scope, latestPrompt, context, result.exceptionOrNull()!!)
             run()
             return result
         }
 
-        renderer.complete(this, latestPrompt, context)
+        renderer.complete(this, scope, latestPrompt, context)
 
         run()
         return Result.success(Unit)
