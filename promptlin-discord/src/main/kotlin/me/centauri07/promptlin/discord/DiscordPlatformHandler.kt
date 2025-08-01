@@ -1,9 +1,11 @@
 package me.centauri07.promptlin.discord
 
 import me.centauri07.promptlin.core.platform.PlatformHandler
+import me.centauri07.promptlin.core.prompt.choice.ChoicePrompt
 import me.centauri07.promptlin.core.prompt.input.InputPrompt
 import me.centauri07.promptlin.core.renderer.Renderer
 import me.centauri07.promptlin.core.renderer.renderer
+import me.centauri07.promptlin.discord.prompt.choice.ButtonOption
 import kotlin.reflect.KClass
 
 /**
@@ -58,6 +60,36 @@ abstract class DiscordPlatformHandler<C : DiscordContext<M>, M>(
                         prompt,
                         settings.failurePromptMessage(ctx, prompt, e)
                         )
+                }
+            }
+
+            bind<ButtonOption, ChoicePrompt<ButtonOption>> {
+                onInvoke { ctx, prompt ->
+                    ctx.sendMessage(
+                        DiscordContext.MessageType.PROMPT,
+                        prompt,
+                        settings.buttonPromptMessage(ctx, prompt, prompt.getOptions(sessionScope))
+                    )
+
+                    ctx.onButtonClicked(prompt) { _, value ->
+                        attemptSet(value)
+                    }
+                }
+
+                onComplete { value, ctx, prompt ->
+                    ctx.sendMessage(
+                        DiscordContext.MessageType.COMPLETE,
+                        prompt,
+                        settings.completePromptMessage(value, ctx, prompt)
+                    )
+                }
+
+                onFailure { ctx, prompt, e ->
+                    ctx.sendMessage(
+                        DiscordContext.MessageType.FAIL,
+                        prompt,
+                        settings.failurePromptMessage(ctx, prompt, e)
+                    )
                 }
             }
         }

@@ -3,6 +3,9 @@ package me.centauri07.promptlin.core.form
 import me.centauri07.promptlin.core.BuilderDsl
 import me.centauri07.promptlin.core.prompt.Prompt
 import me.centauri07.promptlin.core.prompt.PromptBuilderBase
+import me.centauri07.promptlin.core.prompt.choice.ChoicePromptBuilder
+import me.centauri07.promptlin.core.prompt.choice.ChoicePromptBuilderImpl
+import me.centauri07.promptlin.core.prompt.choice.Option
 import me.centauri07.promptlin.core.prompt.input.InputPromptBuilderImpl
 import me.centauri07.promptlin.core.prompt.input.InputHandler
 
@@ -66,4 +69,38 @@ abstract class FormBuilder {
 
         return prompt
     }
+
+    /**
+     * Creates and registers a [me.centauri07.promptlin.core.prompt.choice.ChoicePrompt] for selecting from a predefined list of [Option]s.
+     *
+     * This function uses a [ChoicePromptBuilder] to configure the prompt, allowing the addition
+     * of options and custom validation logic. It automatically registers the built prompt
+     * using [prompt].
+     *
+     * @param O The type of [Option] this choice prompt will handle.
+     * @param id A unique identifier for the prompt.
+     * @param name The display name of the prompt.
+     * @param description A short description explaining the purpose of the prompt.
+     * @param promptBuilderBase A DSL builder block for configuring the [me.centauri07.promptlin.core.prompt.choice.ChoicePrompt],
+     * including its options and conditions.
+     *
+     * @return The created [Prompt] instance for type [O].
+     */
+    inline fun <reified O : Option> choice(
+        id: String,
+        name: String,
+        description: String,
+        promptBuilderBase: ChoicePromptBuilder<O>.() -> Unit = {}
+    ): Prompt<O> {
+        val impl = ChoicePromptBuilderImpl(O::class, id, name, description)
+
+        impl.promptBuilderBase()
+
+        val prompt = impl.build()
+
+        prompt(prompt)
+
+        return prompt
+    }
+
 }
