@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 val projectVersion: String by project
 val jvmToolchainVersion: String by project
 
@@ -5,9 +7,10 @@ plugins {
     kotlin("jvm") version "2.1.21" apply false
 }
 
-version = projectVersion
-
 allprojects {
+    group = "me.centauri07.promptlin"
+    version = projectVersion
+
     repositories {
         mavenCentral()
     }
@@ -15,16 +18,28 @@ allprojects {
 
 subprojects {
     plugins.apply("org.jetbrains.kotlin.jvm")
+    plugins.apply("maven-publish")
 
     extensions.configure<JavaPluginExtension>("java") {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(jvmToolchainVersion.toInt()))
         }
+
+        withSourcesJar()
+        withJavadocJar()
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = jvmToolchainVersion
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(jvmToolchainVersion)
+        }
+    }
+
+    extensions.configure<PublishingExtension>("publishing") {
+        publications {
+            create<MavenPublication>("maven") {
+                from(components["java"])
+            }
         }
     }
 }

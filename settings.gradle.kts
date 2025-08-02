@@ -1,4 +1,4 @@
-rootProject.name = "Promptlin"
+rootProject.name = "promptlin"
 
 include("promptlin-core")
 include("promptlin-console")
