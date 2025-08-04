@@ -40,14 +40,18 @@ class JDAPlatform(
                             .setDescription(prompt.description)
                             .build()
                     )
-                    .setActionRow(options.map { option ->
-                        val buttonStyle = ButtonStyle.fromKey(option.style)
-                        val id = option.value
-                        val label = option.label
-                        val emoji = option.emoji?.let { Emoji.fromUnicode(it) }
-
-                        Button.of(buttonStyle, id, label, emoji)
-                    })
+                    .also { builder ->
+                        options.map { option ->
+                            Button.of(
+                                ButtonStyle.fromKey(option.style),
+                                option.value,
+                                option.label,
+                                option.emoji?.let { Emoji.fromUnicode(it) }
+                            )
+                        }.chunked(5).forEach { row ->
+                            builder.addActionRow(row)
+                        }
+                    }
                     .build()
             }
 
