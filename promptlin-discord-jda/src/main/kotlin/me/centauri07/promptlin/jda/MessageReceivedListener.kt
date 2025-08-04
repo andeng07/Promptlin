@@ -3,6 +3,7 @@ package me.centauri07.promptlin.jda
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.hooks.SubscribeEvent
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 
 object MessageReceivedListener : ListenerAdapter() {
@@ -15,6 +16,7 @@ object MessageReceivedListener : ListenerAdapter() {
         queue[key] = block
     }
 
+    @SubscribeEvent
     override fun onMessageReceived(event: MessageReceivedEvent) {
         if (event.message.contentRaw.startsWith("!form")) return
 

@@ -2,6 +2,7 @@ package me.centauri07.promptlin.jda
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.hooks.SubscribeEvent
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 
 object ButtonClickedListener : ListenerAdapter() {
@@ -13,6 +14,7 @@ object ButtonClickedListener : ListenerAdapter() {
         queue[key] = block
     }
 
+    @SubscribeEvent
     override fun onButtonInteraction(event: ButtonInteractionEvent) {
         val key = ButtonSessionKey(event.user.idLong, event.channel.idLong, event.message.idLong)
 
