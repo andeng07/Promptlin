@@ -18,8 +18,6 @@ object MessageReceivedListener : ListenerAdapter() {
 
     @SubscribeEvent
     override fun onMessageReceived(event: MessageReceivedEvent) {
-        if (event.message.contentRaw.startsWith("!form")) return
-
         val key = InputSessionKey(event.author.idLong, event.channel.idLong)
 
         queue.remove(key)?.also {
