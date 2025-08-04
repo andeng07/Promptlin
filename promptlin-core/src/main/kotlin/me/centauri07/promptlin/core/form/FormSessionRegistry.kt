@@ -20,8 +20,6 @@ object FormSessionRegistry {
      */
     fun getSessions(): List<FormSession<*>> = sessions.toList()
 
-    /* -------------------- Registration -------------------- */
-
     /** Registers a new [FormSession] into the registry. */
     fun register(session: FormSession<*>) {
         sessions += session
@@ -38,6 +36,7 @@ object FormSessionRegistry {
     }
 
     /** Finds and unregisters the first [FormSession] of type [T] that matches the [predicate]. */
+    @JvmName("unregisterTyped")
     inline fun <reified T : RenderContext> unregister(predicate: (FormSession<T>) -> Boolean) {
         getSessions().firstOrNull { it.context is T && predicate(it as FormSession<T>) }?.also { unregister(it) }
     }
@@ -47,6 +46,7 @@ object FormSessionRegistry {
         sessions.any(predicate)
 
     /** Returns whether any session of type [T] matches the given [predicate]. */
+    @JvmName("containsTyped")
     inline fun <reified T : RenderContext> contains(predicate: (FormSession<T>) -> Boolean): Boolean =
         getSessions().any { it.context is T && predicate(it as FormSession<T>) }
 
@@ -55,6 +55,7 @@ object FormSessionRegistry {
         sessions.filter(predicate)
 
     /** Returns all [FormSession]s of type [T] that match the given [predicate]. */
+    @JvmName("filterTyped")
     inline fun <reified T : RenderContext> filter(predicate: (FormSession<T>) -> Boolean): List<FormSession<*>> =
         getSessions().filter { it.context is T && predicate(it as FormSession<T>) }
 
