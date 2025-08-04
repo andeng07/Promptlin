@@ -20,7 +20,8 @@ abstract class Prompt<T : Any>(
     val name: String,
     val description: String,
     private val validators: List<Validator<T>>,
-    private val shouldInclude: FormSessionScope.() -> Boolean
+    private val shouldInclude: FormSessionScope.() -> Boolean,
+    private val onComplete: (T) -> Unit
 ) {
     /**
      * Returns whether this prompt should be shown, based on [shouldInclude].
@@ -42,6 +43,10 @@ abstract class Prompt<T : Any>(
 
         return if (errors.isEmpty()) Result.success(value)
         else Result.failure(IllegalArgumentException(errors.joinToString("; ")))
+    }
+
+    fun complete(value: T) {
+        onComplete(value)
     }
 
     /**

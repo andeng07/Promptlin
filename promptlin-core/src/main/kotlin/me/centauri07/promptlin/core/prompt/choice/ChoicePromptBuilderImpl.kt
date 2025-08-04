@@ -24,6 +24,6 @@ class ChoicePromptBuilderImpl<O : Option>(
     }
 
     override fun build(): Prompt<O> {
-        return ChoicePrompt(valueType, id, name, description, validators, shouldInclude, options)
+        return ChoicePrompt(valueType, id, name, description, validators, shouldInclude, onComplete, options)
     }
 }

@@ -85,4 +85,6 @@ interface PromptBuilderBase<T> {
      * based on previous input.
      */
     fun includeIf(predicate: FormSessionScope.() -> Boolean)
+
+    fun onComplete(block: (T) -> Unit)
 }

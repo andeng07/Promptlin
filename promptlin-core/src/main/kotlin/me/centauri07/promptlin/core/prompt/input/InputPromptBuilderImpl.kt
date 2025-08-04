@@ -13,7 +13,7 @@ class InputPromptBuilderImpl<T : Any>(
 ) : PromptBuilderBaseImpl<T>(valueType, id, name, description) {
 
     override fun build(): Prompt<T> {
-        return InputPrompt(handler, valueType, id, name, description, validators, shouldInclude)
+        return InputPrompt(handler, valueType, id, name, description, validators, shouldInclude, onComplete)
     }
 
 }

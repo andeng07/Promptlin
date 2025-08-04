@@ -52,6 +52,7 @@ class PromptInstance<T : Any>(val prompt: Prompt<T>, private val formSessionScop
         if (validationResult.isFailure) return validationResult.map {}
 
         value = parsed
+        prompt.complete(parsed)
         acknowledge()
         return Result.success(Unit)
     }

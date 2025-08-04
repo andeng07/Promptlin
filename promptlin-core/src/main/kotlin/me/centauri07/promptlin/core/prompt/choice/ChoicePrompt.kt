@@ -23,8 +23,9 @@ class ChoicePrompt<O : Option>(
     description: String,
     validators: MutableList<Validator<O>>,
     shouldInclude: FormSessionScope.() -> Boolean,
+    onComplete: (O) -> Unit,
     private val options: List<ChoiceOption<O>>
-) : Prompt<O>(valueType, id, name, description, validators, shouldInclude) {
+) : Prompt<O>(valueType, id, name, description, validators, shouldInclude, onComplete) {
 
     /**
      * Parses the given [input] string and returns the corresponding [Option] if it exists.

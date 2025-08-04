@@ -19,8 +19,9 @@ class InputPrompt<T : Any>(
     name: String,
     description: String,
     validators: MutableList<Validator<T>>,
-    shouldInclude: FormSessionScope.() -> Boolean
-) : Prompt<T>(valueType, id, name, description, validators, shouldInclude) {
+    shouldInclude: FormSessionScope.() -> Boolean,
+    onComplete: (T) -> Unit
+) : Prompt<T>(valueType, id, name, description, validators, shouldInclude, onComplete) {
 
     /**
      * Parses the provided [input] using the configured [InputHandler].

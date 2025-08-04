@@ -9,7 +9,8 @@ abstract class PromptBuilderBaseImpl<T : Any>(
     protected val name: String,
     protected val description: String,
     protected val validators: MutableList<Prompt.Validator<T>> = mutableListOf(),
-    protected var shouldInclude: FormSessionScope.() -> Boolean = { true }
+    protected var shouldInclude: FormSessionScope.() -> Boolean = { true },
+    protected var onComplete: (T) -> Unit = { }
 ) : PromptBuilderBase<T> {
 
     override fun validate(message: String, predicate: FormSessionScope.(T) -> Boolean) {
@@ -18,6 +19,10 @@ abstract class PromptBuilderBaseImpl<T : Any>(
 
     override fun includeIf(predicate: FormSessionScope.() -> Boolean) {
         shouldInclude = predicate
+    }
+
+    override fun onComplete(block: (T) -> Unit) {
+        onComplete = block
     }
 
     abstract fun build(): Prompt<T>
