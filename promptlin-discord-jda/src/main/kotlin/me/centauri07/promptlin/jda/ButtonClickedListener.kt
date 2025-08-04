@@ -8,6 +8,10 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData
 object ButtonClickedListener : ListenerAdapter() {
     private val queue: MutableMap<ButtonSessionKey, (MessageCreateData, String) -> Unit> = mutableMapOf()
 
+    fun remove(userId: Long) {
+        queue.keys.firstOrNull { it.userId == userId }?.also { queue.remove(it) }
+    }
+
     fun queue(userId: Long, channelId: Long, messageId: Long, block: (MessageCreateData, String) -> Unit) {
         val key = ButtonSessionKey(userId, channelId, messageId)
 

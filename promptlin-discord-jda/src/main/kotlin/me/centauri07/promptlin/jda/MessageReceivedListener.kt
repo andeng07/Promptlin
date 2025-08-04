@@ -10,6 +10,10 @@ object MessageReceivedListener : ListenerAdapter() {
 
     private val queue: MutableMap<InputSessionKey, (MessageCreateData, String) -> Unit> = mutableMapOf()
 
+    fun remove(userId: Long) {
+        queue.keys.firstOrNull { it.userId == userId }?.also { queue.remove(it) }
+    }
+
     fun queue(userId: Long, channelId: Long, block: (MessageCreateData, String) -> Unit) {
         val key = InputSessionKey(userId, channelId)
 
