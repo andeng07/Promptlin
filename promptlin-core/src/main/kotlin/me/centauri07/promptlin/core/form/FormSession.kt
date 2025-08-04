@@ -17,7 +17,7 @@ import me.centauri07.promptlin.core.renderer.Renderer
  */
 class FormSession<C : RenderContext>(
     form: Form,
-    private val context: C,
+    val context: C,
     private val renderer: Renderer<C>,
     private val onFinish: FormSessionScope.(C) -> Unit
 ) {

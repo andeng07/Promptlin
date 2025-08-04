@@ -1,5 +1,7 @@
 package me.centauri07.promptlin.core.form
 
+import me.centauri07.promptlin.core.renderer.RenderContext
+
 /**
  * A global registry for managing all active [FormSession] instances.
  *
@@ -7,67 +9,57 @@ package me.centauri07.promptlin.core.form
  * during the application's runtime. It enables tracking of currently running forms and
  * performing operations on them (e.g., searching, filtering, or bulk removal).
  */
+@Suppress("UNCHECKED_CAST")
 object FormSessionRegistry {
+
+    /** Holds all active form sessions */
     private val sessions = mutableSetOf<FormSession<*>>()
 
     /**
-     * Registers a new [FormSession] into the registry.
-     *
-     * @param session The form session to register.
+     * Returns a snapshot of all currently registered [FormSession]s.
      */
+    fun getSessions(): List<FormSession<*>> = sessions.toList()
+
+    /* -------------------- Registration -------------------- */
+
+    /** Registers a new [FormSession] into the registry. */
     fun register(session: FormSession<*>) {
         sessions += session
     }
 
-    /**
-     * Unregisters an existing [FormSession] from the registry.
-     *
-     * @param session The form session to unregister.
-     */
+    /** Unregisters an existing [FormSession] from the registry. */
     fun unregister(session: FormSession<*>) {
         sessions -= session
     }
 
-    /**
-     * Finds and unregisters the first [FormSession] that matches the given [predicate].
-     *
-     * @param predicate A lambda to determine which session to remove.
-     */
+    /** Finds and unregisters the first [FormSession] that matches the given [predicate]. */
     fun unregister(predicate: (FormSession<*>) -> Boolean) {
-        filter(predicate).firstOrNull()?.also { unregister(it) }
+        sessions.removeIf(predicate)
     }
 
-    /**
-     * Returns a list of all currently registered [FormSession]s.
-     *
-     * @return A list of form sessions.
-     */
-    fun all(): List<FormSession<*>> = sessions.toList()
+    /** Finds and unregisters the first [FormSession] of type [T] that matches the [predicate]. */
+    inline fun <reified T : RenderContext> unregister(predicate: (FormSession<T>) -> Boolean) {
+        getSessions().firstOrNull { it.context is T && predicate(it as FormSession<T>) }?.also { unregister(it) }
+    }
 
-    /**
-     * Clears all sessions from the registry.
-     */
+    /** Returns whether any session in the registry matches the given [predicate]. */
+    fun contains(predicate: (FormSession<*>) -> Boolean): Boolean =
+        sessions.any(predicate)
+
+    /** Returns whether any session of type [T] matches the given [predicate]. */
+    inline fun <reified T : RenderContext> contains(predicate: (FormSession<T>) -> Boolean): Boolean =
+        getSessions().any { it.context is T && predicate(it as FormSession<T>) }
+
+    /** Returns all [FormSession]s that match the given [predicate]. */
+    fun filter(predicate: (FormSession<*>) -> Boolean): List<FormSession<*>> =
+        sessions.filter(predicate)
+
+    /** Returns all [FormSession]s of type [T] that match the given [predicate]. */
+    inline fun <reified T : RenderContext> filter(predicate: (FormSession<T>) -> Boolean): List<FormSession<*>> =
+        getSessions().filter { it.context is T && predicate(it as FormSession<T>) }
+
+    /** Clears all sessions from the registry. */
     fun clear() {
         sessions.clear()
-    }
-
-    /**
-     * Returns whether any session in the registry matches the given [predicate].
-     *
-     * @param predicate A lambda used to match sessions.
-     * @return `true` if any session matches; `false` otherwise.
-     */
-    fun contains(predicate: (FormSession<*>) -> Boolean): Boolean {
-        return sessions.any(predicate)
-    }
-
-    /**
-     * Returns all [FormSession]s that match the given [predicate].
-     *
-     * @param predicate A lambda used to filter sessions.
-     * @return A list of matching form sessions.
-     */
-    fun filter(predicate: (FormSession<*>) -> Boolean): List<FormSession<*>> {
-        return sessions.filter(predicate)
     }
 }
