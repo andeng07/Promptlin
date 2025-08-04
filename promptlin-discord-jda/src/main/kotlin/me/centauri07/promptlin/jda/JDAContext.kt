@@ -60,4 +60,14 @@ class JDAContext(val channel: MessageChannel, val user: User) : DiscordContext<M
 
         ButtonClickedListener.queue(user.idLong, channel.idLong, promptMessageId, block)
     }
+
+    override fun onSelect(
+        prompt: Prompt<*>,
+        block: (MessageCreateData, String) -> Unit
+    ) {
+        val promptMessageId = promptMessages[prompt.id]
+            ?: throw IllegalArgumentException("Prompt with ID '${prompt.id}' has not been sent to the user yet.")
+
+        SelectionMenuListener.queue(user.idLong, channel.idLong, promptMessageId, block)
+    }
 }

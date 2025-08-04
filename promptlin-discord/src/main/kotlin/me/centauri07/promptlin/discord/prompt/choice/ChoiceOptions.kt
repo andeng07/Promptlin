@@ -2,7 +2,7 @@ package me.centauri07.promptlin.discord.prompt.choice
 
 import me.centauri07.promptlin.core.prompt.choice.Option
 
-class SelectOption(value: String, label: String, description: String, emoji: String) :
+class SelectOption(value: String, label: String, description: String, val emoji: String? = null) :
     Option(value, label, description) {
     override fun toString(): String = label
 }

@@ -47,6 +47,8 @@ abstract class DiscordContext<M> : RenderContext {
 
     abstract fun onButtonClicked(prompt: Prompt<*>, block: (M, String) -> Unit)
 
+    abstract fun onSelect(prompt: Prompt<*>, block: (M, String) -> Unit)
+
     enum class MessageType {
         PROMPT, COMPLETE, FAIL
     }

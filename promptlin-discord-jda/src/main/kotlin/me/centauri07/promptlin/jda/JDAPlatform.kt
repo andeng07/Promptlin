@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import java.awt.Color
@@ -57,7 +59,31 @@ class JDAPlatform(
 
             selectPromptMessage { ctx, prompt, options ->
                 MessageCreateBuilder()
-                    .setContent("TO BE IMPLEMENTED!")
+                    .addEmbeds(
+                        EmbedBuilder()
+                            .setColor(Color(0x3B82F6)) // Info Blue
+                            .setTitle("Select ${prompt.name}")
+                            .setDescription(prompt.description)
+                            .build()
+                    )
+                    .also { builder ->
+                        // Create a StringSelectMenu (max 25 options)
+                        val menu = StringSelectMenu.create("select:${prompt.name.lowercase()}")
+                            .setPlaceholder("Choose an option...")
+                            .setMinValues(1)
+                            .setMaxValues(1)
+                            .addOptions(
+                                options.map { option ->
+                                    SelectOption.of(option.label, option.value)
+                                        .withDescription(option.description)
+                                        .withEmoji(option.emoji?.let { Emoji.fromUnicode(it) })
+                                        .withDefault(false)
+                                }.take(25) // Discord max for select menu
+                            )
+                            .build()
+
+                        builder.addActionRow(menu)
+                    }
                     .build()
             }
 
@@ -90,7 +116,7 @@ class JDAPlatform(
 
     init {
         jda.addEventListener(
-            MessageReceivedListener, ButtonClickedListener
+            MessageReceivedListener, ButtonClickedListener, SelectionMenuListener
         )
     }
 }
