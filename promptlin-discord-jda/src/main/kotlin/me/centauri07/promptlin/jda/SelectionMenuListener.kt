@@ -18,9 +18,9 @@ object SelectionMenuListener : ListenerAdapter() {
         val key = SelectionSessionKey(event.user.idLong, event.channel.idLong, event.message.idLong)
 
         queue.remove(key)?.also { handler ->
-            handler.invoke(MessageCreateData.fromMessage(event.message), event.values.joinToString(","))
-
             event.deferEdit().queue()
+
+            handler.invoke(MessageCreateData.fromMessage(event.message), event.values.joinToString(","))
         }
     }
 

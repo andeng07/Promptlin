@@ -19,9 +19,9 @@ object ButtonClickedListener : ListenerAdapter() {
         val key = ButtonSessionKey(event.user.idLong, event.channel.idLong, event.message.idLong)
 
         queue.remove(key)?.also {
-            it.invoke(MessageCreateData.fromMessage(event.message), event.button.id!!)
-
             event.deferEdit().queue()
+
+            it.invoke(MessageCreateData.fromMessage(event.message), event.button.id!!)
         }
 
     }
